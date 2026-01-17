@@ -1,0 +1,16 @@
+version: "2"
+linters:
+  default: standard
+  enable:
+    - nlreturn
+    - mnd
+    - gosec
+    - cyclop
+    - gocyclo
+    - gocritic
+    - lll
+    - funlen
+    - dogsled
+    - gocognit
+    - nestif
+    - whitespace
