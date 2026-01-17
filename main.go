@@ -27,6 +27,8 @@ func main() {
 		panic(err)
 	}
 
+	slog.Info("shannon entropy", "score", calculateEntropy(data))
+
 	size := len(data)
 	sq := math.Sqrt(float64(size))
 	width := int(sq)
@@ -61,4 +63,27 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func calculateEntropy(data []byte) float64 {
+	if len(data) == 0 {
+		return 0.0
+	}
+
+	counts := make(map[byte]int)
+	for _, b := range data {
+		counts[b]++
+	}
+
+	var entropy float64
+	totalBytes := float64(len(data))
+
+	for _, count := range counts {
+		probability := float64(count) / totalBytes
+		// The formula is: H = -sum(p_i * log2(p_i))
+		// We use math.Log2 for the logarithm to base-2 to get the result in bits.
+		entropy -= probability * math.Log2(probability)
+	}
+
+	return entropy
 }
