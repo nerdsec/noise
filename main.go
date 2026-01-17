@@ -11,11 +11,13 @@ import (
 	"path/filepath"
 )
 
+const missingInputExitCode = 2
+
 func main() {
 	fmt.Println()
 	if len(os.Args) == 1 {
 		fmt.Println("missing input filename")
-		os.Exit(2)
+		os.Exit(missingInputExitCode)
 	}
 
 	filename := filepath.Clean(os.Args[1])
@@ -53,11 +55,17 @@ func main() {
 
 	slog.Info("writing output file", "filename", outputFilename)
 
+	outputFilename = filepath.Clean(outputFilename)
 	f, err := os.Create(outputFilename)
 	if err != nil {
 		panic(err)
 	}
-	defer f.Close()
+	defer func() {
+		err := f.Close()
+		if err != nil {
+			slog.Error("failed to close file", "error", err)
+		}
+	}()
 
 	err = png.Encode(f, img)
 	if err != nil {
